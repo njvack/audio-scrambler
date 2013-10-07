@@ -11,16 +11,17 @@ import signal
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-CHUNK = 1024
+CHUNK = 4096
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
-RATE = 44100
 LOOP_SECONDS = 2
 RECORD_SECONDS = 6
 WAVE_OUTPUT_FILENAME = "output2.wav"
 
 
 p = pyaudio.PyAudio()
+info = p.get_default_input_device_info()
+RATE = int(info['defaultSampleRate'])
 
 stream = p.open(format=FORMAT,
                 channels=CHANNELS,
@@ -47,7 +48,7 @@ def record():
             data = stream.read(CHUNK)
             wf.writeframesraw(data)
             if i > 0:
-                wf._nframeswritten = max_frame
+                wf._nframeswritten = max_frame #Fool python's wave library
 
 
 def cleanup():
